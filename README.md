@@ -1,58 +1,345 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ngERP — Sistema de Gestão de Estoque
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Laravel 13 · Vue 3 · JWT Auth · PostgreSQL · Redis · TailwindCSS v4 · DaisyUI
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Visão Geral
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+O **ngERP** é uma aplicação SPA (Single Page Application) de gestão de estoque e compras, com autenticação JWT, controle de armazéns, produtos, lotes, movimentações (Kardex), inventário físico e pedidos de compra.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Fluxogramas
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. Arquitetura Geral
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```mermaid
+flowchart TD
+    Browser(["🌐 Navegador\n(Vue 3 SPA)"])
+    Nginx["Nginx\n(Proxy reverso)"]
+    Laravel["Laravel 13\n(API REST)"]
+    PG[("PostgreSQL\n(Dados)")]
+    Redis[("Redis\n(Cache / Fila / Sessão)")]
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+    Browser -->|"HTTP/HTTPS"| Nginx
+    Nginx -->|"FastCGI"| Laravel
+    Laravel -->|"Eloquent ORM"| PG
+    Laravel -->|"Cache & Filas"| Redis
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+### 2. Fluxo de Autenticação (JWT)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```mermaid
+sequenceDiagram
+    actor User as Usuário
+    participant SPA as Vue SPA
+    participant API as Laravel API
+    participant DB as PostgreSQL
 
-## Code of Conduct
+    User->>SPA: Preenche e-mail e senha
+    SPA->>API: POST /api/auth/login
+    API->>DB: Verifica credenciais
+    DB-->>API: Usuário encontrado
+    API-->>SPA: { token, user }
+    SPA->>SPA: Salva token no localStorage
+    SPA-->>User: Redireciona para /app/dashboard
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    Note over SPA,API: Todas as requisições seguintes enviam\nAuthorization: Bearer <token>
 
-## Security Vulnerabilities
+    SPA->>API: Qualquer rota protegida
+    API->>API: Valida JWT (auth:api)
+    API-->>SPA: Dados da resposta
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    Note over SPA,API: Token expirado (401)
+    SPA->>API: POST /api/auth/refresh
+    API-->>SPA: Novo token
+    SPA->>API: Repete a requisição original
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 3. Fluxo de Estoque (Armazéns → Produtos → Movimentações)
+
+```mermaid
+flowchart LR
+    A[Cadastrar\nArmazém] --> B[Cadastrar\nPosições]
+    B --> C[Cadastrar\nProdutos]
+    C --> D{Controla\nLote?}
+    D -- Sim --> E[Criar Lote\n+ Validade]
+    D -- Não --> F[Movimentação\ndireta]
+    E --> F
+    F --> G{Tipo de\nMovimento}
+    G -- Entrada Compra --> H[Atualiza\nCusto Médio]
+    G -- Saída Venda --> I[Baixa\nEstoque]
+    G -- Transferência --> J[Atualiza\nArmazém Origem\ne Destino]
+    G -- Ajuste --> K[Correção\nde Inventário]
+    H & I & J & K --> L[Kardex\nRegistrado]
+```
+
+---
+
+### 4. Fluxo de Pedido de Compra
+
+```mermaid
+stateDiagram-v2
+    [*] --> Rascunho : Criado pelo usuário
+    Rascunho --> Emitido : Confirmar pedido
+    Emitido --> Recebido_Parcial : Parte da mercadoria chegou
+    Recebido_Parcial --> Recebido_Parcial : Mais itens recebidos
+    Recebido_Parcial --> Concluido : Todos os itens recebidos
+    Emitido --> Concluido : Recebimento total
+    Emitido --> Cancelado : Cancelar pedido
+    Rascunho --> Cancelado : Cancelar rascunho
+    Concluido --> [*]
+    Cancelado --> [*]
+
+    note right of Emitido
+        Ao receber mercadoria,
+        movimentação de Entrada
+        é registrada automaticamente
+        no Kardex
+    end note
+```
+
+---
+
+### 5. Fluxo de Inventário Físico
+
+```mermaid
+flowchart TD
+    Start([Iniciar Inventário]) --> Seleciona[Selecionar Armazém]
+    Seleciona --> Conta[Contagem Física\npor produto/lote]
+    Conta --> Compara{Diferença\nencontrada?}
+    Compara -- Não --> Confirma[Confirmar\nContagem]
+    Compara -- Sim --> Ajuste[Registrar Ajuste\nno Kardex]
+    Ajuste --> Confirma
+    Confirma --> Status{Todos os itens\ncontados?}
+    Status -- Não --> Conta
+    Status -- Sim --> Encerra[Status: Ajustado]
+    Encerra --> End([Inventário Finalizado])
+```
+
+---
+
+### 6. Navegação do Frontend (Vue Router)
+
+```mermaid
+flowchart TD
+    Root["/"] -->|"meta: guest"| Landing["Landing Page\n(Pública)"]
+    Root --> Login["/login\n(meta: guest)"]
+    Root --> Register["/register\n(meta: guest)"]
+    Root --> App["/app\n(meta: requiresAuth)"]
+
+    App --> Dashboard["/app/dashboard"]
+    App --> Armazens["/app/armazens"]
+    App --> Produtos["/app/produtos"]
+    App --> Movimentacoes["/app/movimentacoes"]
+    App --> Inventarios["/app/inventarios"]
+    App --> Fornecedores["/app/fornecedores"]
+    App --> Pedidos["/app/pedidos-compra"]
+
+    Guard{{"Navigation Guard\n(localStorage: ng_jwt)"}}
+
+    Landing -->|"Autenticado?"| Guard
+    Login -->|"Autenticado?"| Guard
+    App -->|"Sem token?"| Guard
+    Guard -- "Sim → guest" --> Dashboard
+    Guard -- "Não → requiresAuth" --> Login
+```
+
+---
+
+## Pré-requisitos
+
+| Ferramenta | Versão mínima |
+|------------|---------------|
+| PHP        | 8.3+          |
+| Composer   | 2.x           |
+| Node.js    | 22+           |
+| npm        | 10+           |
+| PostgreSQL | 16+           |
+| Redis      | 7+            |
+
+> **Alternativa:** use Docker (recomendado) — veja abaixo.
+
+---
+
+## Instalação — Desenvolvimento Local
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/seu-usuario/ng-erp.git
+cd ng-erp
+```
+
+### 2. Instale as dependências PHP
+
+```bash
+composer install
+```
+
+### 3. Configure o ambiente
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Edite `.env` com suas credenciais de banco e Redis:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=ngerp
+DB_USERNAME=seu_usuario
+DB_PASSWORD=sua_senha
+
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+```
+
+### 4. Gere o segredo JWT
+
+```bash
+php artisan jwt:secret
+```
+
+### 5. Execute as migrations
+
+```bash
+php artisan migrate
+```
+
+### 6. Instale as dependências frontend
+
+```bash
+npm install
+```
+
+### 7. Inicie o ambiente de desenvolvimento
+
+```bash
+# Em terminais separados:
+php artisan serve        # API Laravel em http://localhost:8000
+npm run dev              # Vite em http://localhost:5173
+```
+
+Ou use o comando combinado do projeto:
+
+```bash
+composer dev
+```
+
+> Isso sobe o servidor PHP, o worker de filas, o log watcher e o Vite simultaneamente via `concurrently`.
+
+---
+
+## Instalação — Docker (Recomendado)
+
+### 1. Clone e configure
+
+```bash
+git clone https://github.com/seu-usuario/ng-erp.git
+cd ng-erp
+cp .env.example .env
+```
+
+### 2. Suba os containers
+
+```bash
+make up
+# ou
+docker compose -f docker-compose.dev.yml up -d --build
+```
+
+### 3. Instale dependências e migre
+
+```bash
+make shell
+# Dentro do container:
+composer install
+php artisan key:generate
+php artisan jwt:secret
+php artisan migrate
+exit
+```
+
+### 4. Compile o frontend
+
+```bash
+make shell
+npm install && npm run build
+exit
+```
+
+A aplicação estará disponível em **http://localhost:80**.
+
+---
+
+## Comandos Úteis
+
+```bash
+# Migrations
+php artisan migrate
+php artisan migrate:fresh --seed   # Zera e resemeia o banco
+
+# Rotas
+php artisan route:list --path=api  # Lista todas as rotas da API
+
+# Cache
+php artisan config:clear
+php artisan route:clear
+php artisan cache:clear
+
+# Make (Docker)
+make up          # Sobe o ambiente
+make down        # Derruba
+make shell       # Abre shell no container
+make artisan cmd='migrate'
+make logs
+```
+
+---
+
+## Estrutura de Módulos
+
+```
+app/
+├── Http/Controllers/
+│   ├── AuthController.php          ← Login, Register, Refresh, Me
+│   └── Estoque/
+│       ├── ArmazemController.php
+│       ├── ProdutoController.php
+│       ├── FornecedorController.php
+│       ├── PedidoCompraController.php
+│       ├── MovimentacaoEstoqueController.php
+│       └── InventarioController.php
+├── Models/                         ← Eloquent models
+├── Services/                       ← Regras de negócio
+resources/js/
+├── api/
+│   ├── http.js                     ← Axios + JWT interceptors
+│   ├── auth.js                     ← Store de autenticação
+│   └── estoque.js                  ← Endpoints do ERP
+├── components/
+│   ├── DrawerPanel.vue             ← Painel lateral reutilizável
+│   └── landing/                   ← Componentes da landing page
+├── layouts/
+│   └── AppLayout.vue               ← Layout com sidebar responsiva
+├── router/index.js                 ← Rotas + navigation guards
+└── views/
+    ├── auth/                       ← Login e Cadastro
+    ├── estoque/                    ← Módulos ERP
+    └── LandingPage.vue
+```
+
+---
+
+## Licença
+
+MIT © 2026 ngERP
