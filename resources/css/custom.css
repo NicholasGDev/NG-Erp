@@ -1,0 +1,246 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   custom.css — Estilos próprios do ngERP (CSS puro, sem Tailwind)
+   Tudo que não é utilitário do framework fica aqui.
+────────────────────────────────────────────────────────────────────────── */
+
+/* ── Variáveis de marca ─────────────────────────────────────────────── */
+:root {
+  --brand:        #00C86A;
+  --brand-dark:   #00A357;
+  --brand-light:  #e6fff3;
+  --sidebar-w:    260px;
+  --topbar-h:     64px;
+}
+
+/* ── Reset base ─────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  color: #1a1a2e;
+  background: #f9fafb;
+}
+
+/* ── Sidebar layout ─────────────────────────────────────────────────── */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-collapsed {
+  transform: translateX(calc(-1 * var(--sidebar-w)));
+}
+
+.main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.25s ease;
+}
+
+.main-content.expanded {
+  margin-left: 0;
+}
+
+/* ── Topbar ─────────────────────────────────────────────────────────── */
+.topbar {
+  height: var(--topbar-h);
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: 1rem;
+}
+
+/* ── Sidebar nav items ──────────────────────────────────────────────── */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.5rem;
+  margin: 0.15rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-item:hover {
+  background: var(--brand-light);
+  color: var(--brand);
+}
+
+.nav-item.active {
+  background: var(--brand-light);
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.nav-item .nav-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ── Brand button ────────────────────────────────────────────────────── */
+.btn-brand {
+  background: var(--brand);
+  color: #fff;
+  border: none;
+}
+
+.btn-brand:hover {
+  background: var(--brand-dark);
+  color: #fff;
+}
+
+/* ── Tabela ERP ─────────────────────────────────────────────────────── */
+.erp-table thead th {
+  background: #f3f4f6;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.erp-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* ── Badge de status ─────────────────────────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-ativo       { background: #dcfce7; color: #15803d; }
+.status-inativo     { background: #f3f4f6; color: #6b7280; }
+.status-rascunho    { background: #fef9c3; color: #854d0e; }
+.status-emitido     { background: #dbeafe; color: #1d4ed8; }
+.status-concluido   { background: #dcfce7; color: #15803d; }
+.status-cancelado   { background: #fee2e2; color: #b91c1c; }
+.status-disponivel  { background: #dcfce7; color: #15803d; }
+.status-quarentena  { background: #fef9c3; color: #854d0e; }
+.status-vencido     { background: #fee2e2; color: #b91c1c; }
+
+/* ── Fade in ─────────────────────────────────────────────────────────── */
+[data-fade] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+[data-fade].visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Scrollbar customizada ───────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brand); }
+
+/* ── Responsivo mobile ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(calc(-1 * var(--sidebar-w)));
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   LANDING PAGE — estilos específicos (sem Tailwind)
+═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Navbar shadow ao rolar ─────────────────────────────────────────── */
+.nav-scrolled {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Journey tabs ────────────────────────────────────────────────────── */
+.journey-tab {
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.journey-tab.active {
+  border-bottom-color: var(--brand);
+  color: var(--brand);
+  font-weight: 700;
+}
+
+/* ── Benefits slider ─────────────────────────────────────────────────── */
+.benefit-track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 1rem;
+}
+
+.benefit-track::-webkit-scrollbar {
+  display: none;
+}
+
+.benefit-card {
+  min-width: 280px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ── FAQ details ─────────────────────────────────────────────────────── */
+.faq-item summary {
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-chevron {
+  transition: transform 0.2s ease;
+}
+
+.faq-item[open] .faq-chevron {
+  transform: rotate(180deg);
+}
