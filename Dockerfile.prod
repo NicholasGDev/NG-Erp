@@ -1,0 +1,120 @@
+# =============================================================================
+# Dockerfile.prod — Laravel 8.3 PROD
+# Multi-stage build: builder → runner Alpine
+# =============================================================================
+
+# ── Stage 1: Dependencias Composer ───────────────────────────────────────────
+FROM composer:latest AS composer-deps
+
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install \
+    --no-dev \
+    --no-scripts \
+    --no-autoloader \
+    --no-interaction \
+    --prefer-dist
+
+COPY . .
+RUN composer dump-autoload --optimize --no-dev
+
+# ── Stage 2: Assets Node.js ───────────────────────────────────────────────────
+FROM node:22-alpine AS node-assets
+
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev
+
+COPY . .
+RUN npm run build 2>/dev/null || echo "No build script defined, skipping."
+
+# ── Stage 3: Runtime PHP (imagem final) ───────────────────────────────────────
+FROM php:8.3-fpm-bookworm AS runtime
+
+LABEL maintainer="Ng Development <ngdev@example.com>"
+LABEL description="Laravel PROD image - PHP 8.3 optimized"
+
+# ── Dependencias de sistema (apenas producao) ────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Libs de producao
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libwebp-dev \
+    libzip-dev \
+    libicu-dev \
+    libxml2-dev \
+    libonig-dev \
+    libpq-dev \
+    libsqlite3-dev \
+    libmagickwand-dev \
+    libgmp-dev \
+    # Runtime
+    nginx \
+    supervisor \
+    curl \
+    ca-certificates \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Extensoes PHP (producao) ──────────────────────────────────────────────────
+RUN docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
+        --with-webp \
+    && docker-php-ext-install -j"$(nproc)" \
+        bcmath \
+        ctype \
+        dom \
+        exif \
+        fileinfo \
+        gd \
+        gmp \
+        iconv \
+        intl \
+        mbstring \
+        opcache \
+        pcntl \
+        pdo \
+        pdo_sqlite \
+        posix \
+        simplexml \
+        sockets \
+        tokenizer \
+        xml \
+        xmlreader \
+        xmlwriter \
+        xsl \
+        zip \
+        pdo_mysql \
+        mysqli \
+    && echo "Extensions installed"
+
+# ── Redis + Imagick via PECL ──────────────────────────────────────────────────
+RUN pecl install redis igbinary imagick \
+    && docker-php-ext-enable redis igbinary imagick
+
+# ── Configs PHP e Nginx ───────────────────────────────────────────────────────
+COPY docker/php/php-prod.ini      $PHP_INI_DIR/conf.d/99-app-prod.ini
+COPY docker/php/www.conf          /usr/local/etc/php-fpm.d/www.conf
+COPY docker/nginx/nginx.conf      /etc/nginx/nginx.conf
+COPY docker/nginx/default.conf    /etc/nginx/conf.d/default.conf
+COPY docker/supervisor/supervisord.prod.conf /etc/supervisor/conf.d/supervisord.conf
+
+# ── Codigo da aplicacao ───────────────────────────────────────────────────────
+WORKDIR /var/www/html
+
+COPY --chown=www-data:www-data --from=composer-deps /app/vendor       ./vendor
+COPY --chown=www-data:www-data --from=composer-deps /app              .
+COPY --chown=www-data:www-data --from=node-assets   /app/public       ./public
+
+# ── Bootstrap producao ────────────────────────────────────────────────────────
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache \
+    && php artisan event:cache \
+    && chown -R www-data:www-data /var/www/html/storage \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+EXPOSE 80
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
