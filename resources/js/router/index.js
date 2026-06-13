@@ -21,16 +21,17 @@ const NotFound      = () => import('@/views/NotFound.vue');
 
 const routes = [
     /* ── Landing page ───────────────────────────────────────────────── */
-    { path: '/', name: 'home', component: LandingPage },
+    { path: '/', name: 'home', component: LandingPage, meta: { guest: true } },
 
     /* ── Auth (sem sidebar) ─────────────────────────────────────────── */
-    { path: '/login',    name: 'login',    component: Login },
-    { path: '/register', name: 'register', component: Register },
+    { path: '/login',    name: 'login',    component: Login,    meta: { guest: true } },
+    { path: '/register', name: 'register', component: Register, meta: { guest: true } },
 
-    /* ── ERP App (com sidebar) ──────────────────────────────────────── */
+    /* ── ERP App (com sidebar) — requer autenticação ────────────────── */
     {
         path: '/app',
         component: AppLayout,
+        meta: { requiresAuth: true },
         children: [
             { path: '',              redirect: '/app/dashboard' },
             { path: 'dashboard',     name: 'dashboard',       component: Dashboard },
@@ -47,8 +48,23 @@ const routes = [
     { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
 ];
 
-export default createRouter({
+const router = createRouter({
     history: createWebHistory(),
     routes,
     scrollBehavior: (to, from, saved) => saved ?? { top: 0 },
 });
+
+/* ── Navigation guard ───────────────────────────────────────────────── */
+router.beforeEach((to) => {
+    const isAuth = !!localStorage.getItem('ng_jwt');
+
+    if (to.meta.requiresAuth && !isAuth) {
+        return { name: 'login', query: { redirect: to.fullPath } };
+    }
+
+    if (to.meta.guest && isAuth) {
+        return { path: '/app/dashboard' };
+    }
+});
+
+export default router;

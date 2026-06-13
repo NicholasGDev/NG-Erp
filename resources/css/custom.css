@@ -244,3 +244,26 @@ body {
 .faq-item[open] .faq-chevron {
   transform: rotate(180deg);
 }
+
+/* ── Inputs — fundo cinza claro em todo o sistema ─────────────────── */
+.input,
+.select,
+.textarea {
+  background-color: #f8fafc !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #1a1a2e !important;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  background-color: #fff !important;
+  border-color: var(--brand) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(0, 200, 106, 0.12) !important;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #94a3b8 !important;
+}
