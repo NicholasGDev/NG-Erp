@@ -19,6 +19,9 @@ bootstrap/cache/*
 docker-compose*.yml
 Dockerfile*
 docker/
+!docker/php/
+!docker/nginx/
+!docker/supervisor/
 
 # ── Tests ─────────────────────────────────────────────────────────────────────
 tests/
