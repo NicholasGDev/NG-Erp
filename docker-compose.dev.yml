@@ -20,7 +20,7 @@ services:
     networks:
       - app-network
     depends_on:
-      mysql:
+      pgsql:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -46,23 +46,21 @@ services:
     depends_on:
       - app
 
-  mysql:
-    image: mysql:8.4
+  pgsql:
+    image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-secret_root}"
-      MYSQL_DATABASE:      "${DB_DATABASE:-laravel}"
-      MYSQL_USER:          "${DB_USERNAME:-laravel}"
-      MYSQL_PASSWORD:      "${DB_PASSWORD:-secret}"
+      POSTGRES_DB:       "${DB_DATABASE:-ngerp}"
+      POSTGRES_USER:     "${DB_USERNAME:-ngerp}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-secret}"
     ports:
-      - "${FORWARD_DB_MYSQL_PORT:-3306}:3306"
+      - "${FORWARD_DB_PGSQL_PORT:-5432}:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - pgsql_data:/var/lib/postgresql/data
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-secret_root}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-ngerp} -d ${DB_DATABASE:-ngerp}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -98,5 +96,5 @@ networks:
 
 volumes:
   vendor_cache:
-  mysql_data:
+  pgsql_data:
   redis_data:

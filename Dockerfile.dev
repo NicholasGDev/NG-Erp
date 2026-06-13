@@ -87,7 +87,6 @@ RUN docker-php-ext-configure gd \
         sysvsem \
         sysvshm \
         tidy \
-        tokenizer \
         xml \
         xmlreader \
         xmlwriter \
