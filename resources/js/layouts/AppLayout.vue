@@ -1,38 +1,32 @@
 <template>
   <div class="app-layout">
-    <!-- Overlay mobile -->
-    <div
-      v-if="sidebarOpen"
-      class="fixed inset-0 bg-black/30 z-30 md:hidden"
-      @click="sidebarOpen = false"
-    />
 
-    <!-- Botão abrir sidebar (quando fechado) -->
-    <button
-      v-show="!sidebarOpen"
-      class="fixed top-4 left-4 z-50 btn btn-sm btn-square bg-white shadow border border-gray-200"
-      @click="sidebarOpen = true"
-      aria-label="Abrir menu"
-    >
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-      </svg>
-    </button>
+    <!-- ── Overlay mobile ────────────────────────────────────────── -->
+    <Transition name="overlay-fade">
+      <div
+        v-if="sidebarOpen && isMobile"
+        class="fixed inset-0 bg-black/40 z-30"
+        @click="sidebarOpen = false"
+      />
+    </Transition>
 
-    <!-- Sidebar -->
-    <aside class="sidebar" :class="{ 'sidebar-collapsed': !sidebarOpen }">
-      <div class="h-16 flex items-center justify-between px-5 border-b border-gray-100 flex-shrink-0">
-        <RouterLink to="/app/dashboard" class="text-xl font-black text-brand">ngERP</RouterLink>
-        <button class="btn btn-ghost btn-xs btn-square" @click="sidebarOpen = false" aria-label="Fechar menu">
+    <!-- ── Sidebar ───────────────────────────────────────────────── -->
+    <aside class="sidebar" :class="{ 'sidebar-open': sidebarOpen }">
+
+      <!-- Logo + fechar -->
+      <div class="h-14 flex items-center justify-between px-5 border-b border-gray-100 flex-shrink-0">
+        <RouterLink to="/app/dashboard" class="text-xl font-black text-brand" @click="closeMobile">ngERP</RouterLink>
+        <button class="btn btn-ghost btn-xs btn-square md:hidden" @click="sidebarOpen = false" aria-label="Fechar">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
       </div>
 
-      <nav class="flex-1 py-4 overflow-y-auto">
+      <!-- Nav -->
+      <nav class="flex-1 py-3 overflow-y-auto">
         <p class="px-5 mb-1 text-xs font-bold text-gray-400 uppercase tracking-wider">Visão Geral</p>
-        <RouterLink to="/app/dashboard" class="nav-item" :class="{ active: $route.name === 'dashboard' }" @click="closeMobile">
+        <RouterLink to="/app/dashboard"   class="nav-item" :class="{ active: $route.name === 'dashboard' }"     @click="closeMobile">
           <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
           Dashboard
         </RouterLink>
@@ -66,8 +60,9 @@
         </RouterLink>
       </nav>
 
+      <!-- User footer -->
       <div class="p-4 border-t border-gray-100 flex-shrink-0">
-        <div class="flex items-center gap-3 mb-3">
+        <div class="flex items-center gap-3 mb-2">
           <div class="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-black flex-shrink-0">
             {{ userInitial }}
           </div>
@@ -76,10 +71,7 @@
             <p class="text-xs text-gray-400 truncate">{{ userEmail }}</p>
           </div>
         </div>
-        <button
-          class="btn btn-ghost btn-xs w-full text-gray-500 hover:text-red-500"
-          @click="handleLogout"
-        >
+        <button class="btn btn-ghost btn-xs w-full text-gray-500 hover:text-red-500" @click="handleLogout">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
           </svg>
@@ -88,33 +80,79 @@
       </div>
     </aside>
 
-    <!-- Main content -->
-    <div class="main-content" :class="{ expanded: !sidebarOpen }">
-      <main class="flex-1 p-6">
+    <!-- ── Área principal ─────────────────────────────────────────── -->
+    <div class="main-wrapper">
+
+      <!-- Topbar — mobile e desktop -->
+      <header class="app-topbar">
+        <button
+          class="btn btn-ghost btn-sm btn-square text-gray-600"
+          @click="sidebarOpen = !sidebarOpen"
+          aria-label="Menu"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+
+        <h1 class="text-sm font-semibold text-gray-800 flex-1 truncate ml-1">{{ pageTitle }}</h1>
+
+        <div class="flex items-center gap-2">
+          <span class="hidden sm:inline-flex badge badge-success badge-outline text-xs">Online</span>
+          <div class="w-7 h-7 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-black">
+            {{ userInitial }}
+          </div>
+        </div>
+      </header>
+
+      <!-- Conteúdo -->
+      <main class="flex-1 p-4 md:p-6">
         <RouterView />
       </main>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { logout, currentUser } from '@/api/auth.js';
 
+const route  = useRoute();
 const router = useRouter();
+
+const isMobile    = ref(window.innerWidth < 768);
 const sidebarOpen = ref(window.innerWidth >= 768);
+
+function onResize() {
+  isMobile.value = window.innerWidth < 768;
+  if (window.innerWidth >= 768) sidebarOpen.value = true;
+}
+onMounted(() => window.addEventListener('resize', onResize));
+onUnmounted(() => window.removeEventListener('resize', onResize));
 
 const userName    = computed(() => currentUser.value?.name  ?? 'Usuário');
 const userEmail   = computed(() => currentUser.value?.email ?? '');
 const userInitial = computed(() => userName.value.charAt(0).toUpperCase());
 
-async function handleLogout() {
-  await logout();
-  router.push('/login');
-}
+const titles = {
+  dashboard:        'Dashboard',
+  armazens:         'Armazéns',
+  produtos:         'Produtos',
+  movimentacoes:    'Movimentações de Estoque',
+  inventarios:      'Inventários',
+  fornecedores:     'Fornecedores',
+  'pedidos-compra': 'Pedidos de Compra',
+};
+const pageTitle = computed(() => titles[route.name] ?? 'ngERP');
 
 function closeMobile() {
   if (window.innerWidth < 768) sidebarOpen.value = false;
+}
+
+async function handleLogout() {
+  await logout();
+  router.push('/login');
 }
 </script>
