@@ -144,7 +144,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import http from '@/api/http.js';
+import { login } from '@/api/auth.js';
 
 const router = useRouter();
 
@@ -165,17 +165,10 @@ async function handleLogin() {
   loading.value = true;
   error.value = '';
   try {
-    const { data } = await http.post('/auth/login', {
-      email: form.email,
-      password: form.password,
-      remember: form.remember,
-    });
-    if (data.token) {
-      localStorage.setItem('auth_token', data.token);
-    }
+    await login(form.email, form.password, form.remember);
     router.push('/app/dashboard');
   } catch (e) {
-    error.value = e.response?.data?.message ?? 'E-mail ou senha incorretos.';
+    error.value = e.response?.data?.message ?? e.message ?? 'E-mail ou senha incorretos.';
   } finally {
     loading.value = false;
   }

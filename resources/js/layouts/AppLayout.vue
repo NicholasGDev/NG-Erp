@@ -22,7 +22,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" :class="{ 'sidebar-collapsed': !sidebarOpen }">
       <div class="h-16 flex items-center justify-between px-5 border-b border-gray-100 flex-shrink-0">
-        <RouterLink to="/" class="text-xl font-black text-brand">ngERP</RouterLink>
+        <RouterLink to="/app/dashboard" class="text-xl font-black text-brand">ngERP</RouterLink>
         <button class="btn btn-ghost btn-xs btn-square" @click="sidebarOpen = false" aria-label="Fechar menu">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -66,8 +66,25 @@
         </RouterLink>
       </nav>
 
-      <div class="p-4 border-t border-gray-100 text-xs text-gray-400 text-center">
-        ngERP v1.0 · Laravel 13
+      <div class="p-4 border-t border-gray-100 flex-shrink-0">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-black flex-shrink-0">
+            {{ userInitial }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold text-gray-800 truncate">{{ userName }}</p>
+            <p class="text-xs text-gray-400 truncate">{{ userEmail }}</p>
+          </div>
+        </div>
+        <button
+          class="btn btn-ghost btn-xs w-full text-gray-500 hover:text-red-500"
+          @click="handleLogout"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+          Sair
+        </button>
       </div>
     </aside>
 
@@ -81,9 +98,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { logout, currentUser } from '@/api/auth.js';
 
+const router = useRouter();
 const sidebarOpen = ref(window.innerWidth >= 768);
+
+const userName    = computed(() => currentUser.value?.name  ?? 'Usuário');
+const userEmail   = computed(() => currentUser.value?.email ?? '');
+const userInitial = computed(() => userName.value.charAt(0).toUpperCase());
+
+async function handleLogout() {
+  await logout();
+  router.push('/login');
+}
 
 function closeMobile() {
   if (window.innerWidth < 768) sidebarOpen.value = false;

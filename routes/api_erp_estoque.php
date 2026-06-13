@@ -11,15 +11,21 @@ use App\Http\Controllers\Estoque\MovimentacaoEstoqueController;
 use App\Http\Controllers\Estoque\InventarioController;
 use Illuminate\Support\Facades\Route;
 
-/* ── Auth (sem autenticação) ──────────────────────────────────────── */
+/* ── Auth — rotas públicas ────────────────────────────────────────── */
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login',    [AuthController::class, 'login']);
-    Route::post('logout',   [AuthController::class, 'logout'])->middleware('auth');
-    Route::get('me',        [AuthController::class, 'me'])->middleware('auth');
 });
 
-Route::prefix('estoque')->group(function () {
+/* ── Auth — rotas protegidas ──────────────────────────────────────── */
+Route::prefix('auth')->middleware('auth:api')->group(function () {
+    Route::post('logout',  [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::get ('me',      [AuthController::class, 'me']);
+});
+
+/* ── ERP — rotas protegidas por JWT ───────────────────────────────── */
+Route::middleware('auth:api')->prefix('estoque')->group(function () {
     Route::apiResource('armazens',              ArmazemController::class);
     Route::apiResource('fornecedores',          FornecedorController::class);
     Route::apiResource('produtos',              ProdutoController::class);
@@ -27,7 +33,7 @@ Route::prefix('estoque')->group(function () {
     Route::apiResource('inventarios',           InventarioController::class);
 
     // Kardex — sem PUT/DELETE
-    Route::get ('movimentacoes',     [MovimentacaoEstoqueController::class, 'index']);
-    Route::post('movimentacoes',     [MovimentacaoEstoqueController::class, 'store']);
-    Route::get ('movimentacoes/{id}',[MovimentacaoEstoqueController::class, 'show']);
+    Route::get ('movimentacoes',      [MovimentacaoEstoqueController::class, 'index']);
+    Route::post('movimentacoes',      [MovimentacaoEstoqueController::class, 'store']);
+    Route::get ('movimentacoes/{id}', [MovimentacaoEstoqueController::class, 'show']);
 });

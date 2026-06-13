@@ -211,7 +211,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import http from '@/api/http.js';
+import { register } from '@/api/auth.js';
 
 const router = useRouter();
 
@@ -265,25 +265,21 @@ async function handleRegister() {
   Object.keys(fieldErrors).forEach(k => delete fieldErrors[k]);
 
   try {
-    const { data } = await http.post('/auth/register', {
-      name: form.name,
-      company: form.company,
-      email: form.email,
-      password: form.password,
+    await register({
+      name:                  form.name,
+      company:               form.company,
+      email:                 form.email,
+      password:              form.password,
       password_confirmation: form.passwordConfirmation,
     });
-    if (data.token) {
-      localStorage.setItem('auth_token', data.token);
-    }
     success.value = true;
     setTimeout(() => router.push('/app/dashboard'), 1200);
   } catch (e) {
-    if (e.response?.status === 422) {
-      const errors = e.response.data?.errors ?? {};
-      Object.assign(fieldErrors, errors);
+    if (e.errors) {
+      Object.assign(fieldErrors, e.errors);
       error.value = 'Corrija os campos destacados.';
     } else {
-      error.value = e.response?.data?.message ?? 'Erro ao criar conta. Tente novamente.';
+      error.value = e.response?.data?.message ?? e.message ?? 'Erro ao criar conta. Tente novamente.';
     }
   } finally {
     loading.value = false;
