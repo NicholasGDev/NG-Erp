@@ -245,6 +245,25 @@ body {
   transform: rotate(180deg);
 }
 
+/* ── Drawer panel animations ─────────────────────────────────────── */
+.drawer-slide-enter-active,
+.drawer-slide-leave-active {
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.drawer-slide-enter-from,
+.drawer-slide-leave-to {
+  transform: translateX(100%);
+}
+
+.drawer-overlay-enter-active,
+.drawer-overlay-leave-active {
+  transition: opacity 0.25s ease;
+}
+.drawer-overlay-enter-from,
+.drawer-overlay-leave-to {
+  opacity: 0;
+}
+
 /* ── Inputs — fundo cinza claro em todo o sistema ─────────────────── */
 .input,
 .select,
