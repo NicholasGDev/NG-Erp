@@ -1,0 +1,137 @@
+# =============================================================================
+# back/Dockerfile.dev — Caronte ERP Backend DEV
+# PHP 8.3-fpm | Xdebug | Composer | Multi-DB
+# O frontend tem seu prรณprio container (front/Dockerfile.dev).
+# =============================================================================
+FROM php:8.3-fpm-bookworm AS dev
+
+LABEL maintainer="Caronte Development <dev@caronteerp.com>"
+LABEL description="Caronte ERP Backend DEV image - PHP 8.3"
+
+# ── Argumentos de build ───────────────────────────────────────────────────────
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+# ── Dependencias de sistema ───────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Build essentials
+    build-essential \
+    git \
+    curl \
+    wget \
+    gnupg \
+    ca-certificates \
+    lsb-release \
+    # Libs para extensoes PHP
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libwebp-dev \
+    libavif-dev \
+    libzip-dev \
+    libicu-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    libssl-dev \
+    libreadline-dev \
+    libbz2-dev \
+    libgmp-dev \
+    libmagickwand-dev \
+    libmemcached-dev \
+    libonig-dev \
+    libtidy-dev \
+    libldap2-dev \
+    libsasl2-dev \
+    # PostgreSQL client
+    libpq-dev \
+    # SQLite
+    libsqlite3-dev \
+    # Ferramentas
+    unzip \
+    zip \
+    vim \
+    nano \
+    htop \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Extensoes PHP core ────────────────────────────────────────────────────────
+RUN docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
+        --with-webp \
+    && docker-php-ext-install -j"$(nproc)" \
+        bcmath \
+        bz2 \
+        calendar \
+        ctype \
+        dba \
+        dom \
+        exif \
+        fileinfo \
+        ftp \
+        gd \
+        gettext \
+        gmp \
+        iconv \
+        intl \
+        mbstring \
+        opcache \
+        pcntl \
+        pdo \
+        pdo_sqlite \
+        posix \
+        simplexml \
+        sockets \
+        sysvmsg \
+        sysvsem \
+        sysvshm \
+        tidy \
+        xml \
+        xmlreader \
+        xmlwriter \
+        xsl \
+        zip
+
+# ── Extensoes de banco de dados ───────────────────────────────────────────────
+RUN docker-php-ext-install pdo_mysql mysqli \
+    && echo "DB extensions installed"
+
+# ── Extensoes via PECL ────────────────────────────────────────────────────────
+RUN pecl channel-update pecl.php.net \
+    && pecl install \
+        redis \
+        igbinary \
+        imagick \
+        memcached \
+        uuid \
+        xdebug \
+    && docker-php-ext-enable \
+        redis \
+        igbinary \
+        imagick \
+        memcached \
+        uuid \
+        xdebug
+
+# ── Composer ──────────────────────────────────────────────────────────────────
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+ENV COMPOSER_HOME=/tmp/composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+# ── Configs PHP ───────────────────────────────────────────────────────────────
+COPY docker/php/php-dev.ini      $PHP_INI_DIR/conf.d/99-app-dev.ini
+COPY docker/php/xdebug.ini       $PHP_INI_DIR/conf.d/99-xdebug.ini
+COPY docker/php/www.conf         /usr/local/etc/php-fpm.d/www.conf
+
+# ── Usuário não-root ──────────────────────────────────────────────────────────
+RUN groupmod -o -g "${GROUP_ID}" www-data \
+    && usermod  -o -u "${USER_ID}" www-data \
+    && mkdir -p /var/www/html/storage/logs \
+    && chown -R www-data:www-data /var/www
+
+WORKDIR /var/www/html
+USER www-data
+
+EXPOSE 9000
+CMD ["php-fpm"]

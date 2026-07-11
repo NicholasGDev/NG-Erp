@@ -7,18 +7,19 @@ COMPOSE_PROD=docker compose -f docker-compose.prod.yml
 
 help:
 	@echo ""
-	@echo "  ngErp — comandos Make"
+	@echo "  Caronte ERP — comandos Make"
 	@echo "  ────────────────────────────────────────"
-	@echo "  up        Sobe o ambiente DEV"
-	@echo "  down      Derruba o ambiente DEV"
-	@echo "  build     Reconstroi as imagens DEV"
-	@echo "  shell     Abre shell no container app (DEV)"
-	@echo "  artisan   Executa artisan  ex: make artisan cmd='migrate'"
-	@echo "  composer  Executa composer ex: make composer cmd='install'"
-	@echo "  logs      Exibe logs do app"
-	@echo "  test      Roda PHPUnit no container"
-	@echo "  prod-up   Sobe o ambiente PROD"
-	@echo "  prod-down Derruba o ambiente PROD"
+	@echo "  up          Sobe o ambiente DEV (backend + frontend)"
+	@echo "  down        Derruba o ambiente DEV"
+	@echo "  build       Reconstroi as imagens DEV"
+	@echo "  shell       Abre shell no container app (DEV)"
+	@echo "  artisan     ex: make artisan cmd='migrate'"
+	@echo "  composer    ex: make composer cmd='install'"
+	@echo "  logs        Exibe logs do backend"
+	@echo "  logs-front  Exibe logs do frontend"
+	@echo "  test        Roda PHPUnit no container"
+	@echo "  prod-up     Sobe o ambiente PROD"
+	@echo "  prod-down   Derruba o ambiente PROD"
 	@echo ""
 
 up:
@@ -41,6 +42,9 @@ composer:
 
 logs:
 	${COMPOSE_DEV} logs -f app
+
+logs-front:
+	${COMPOSE_DEV} logs -f frontend
 
 test:
 	${COMPOSE_DEV} exec app php artisan test
