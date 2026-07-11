@@ -11,12 +11,12 @@ const LandingPage        = () => import('@/views/LandingPage.vue');
 const Login              = () => import('@/views/auth/Login.vue');
 const Register           = () => import('@/views/auth/Register.vue');
 const Dashboard          = () => import('@/views/Dashboard.vue');
-const Warehouses         = () => import('@/views/estoque/Armazens.vue');
-const Suppliers          = () => import('@/views/estoque/Fornecedores.vue');
-const Products           = () => import('@/views/estoque/Produtos.vue');
-const PurchaseOrders     = () => import('@/views/estoque/PedidosCompra.vue');
-const StockMovements     = () => import('@/views/estoque/Movimentacoes.vue');
-const PhysicalInventory  = () => import('@/views/estoque/Inventarios.vue');
+const Warehouses         = () => import('@/views/stock/Warehouses.vue');
+const Suppliers          = () => import('@/views/stock/Suppliers.vue');
+const Products           = () => import('@/views/stock/Products.vue');
+const PurchaseOrders     = () => import('@/views/stock/PurchaseOrders.vue');
+const StockMovements     = () => import('@/views/stock/StockMovements.vue');
+const PhysicalInventory  = () => import('@/views/stock/PhysicalInventory.vue');
 const NotFound           = () => import('@/views/NotFound.vue');
 
 const routes = [
