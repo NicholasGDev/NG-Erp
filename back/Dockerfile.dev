@@ -60,13 +60,18 @@ RUN docker-php-ext-configure gd \
         --with-freetype \
         --with-jpeg \
         --with-webp \
+    && mkdir -p /tmp/dom-headers \
+    && cp /usr/src/php/ext/dom/*.h /tmp/dom-headers/ \
+    && docker-php-ext-install dom xml simplexml xmlwriter xsl \
+    && mkdir -p /usr/local/include/php/ext/dom \
+    && cp /tmp/dom-headers/*.h /usr/local/include/php/ext/dom/ \
+    && docker-php-ext-install xmlreader \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         bz2 \
         calendar \
         ctype \
         dba \
-        dom \
         exif \
         fileinfo \
         ftp \
@@ -81,16 +86,11 @@ RUN docker-php-ext-configure gd \
         pdo \
         pdo_sqlite \
         posix \
-        simplexml \
         sockets \
         sysvmsg \
         sysvsem \
         sysvshm \
         tidy \
-        xml \
-        xmlreader \
-        xmlwriter \
-        xsl \
         zip
 
 # ── Extensoes de banco de dados ───────────────────────────────────────────────
@@ -102,10 +102,10 @@ RUN pecl channel-update pecl.php.net \
     && pecl install \
         redis \
         igbinary \
-        imagick \
         memcached \
         uuid \
         xdebug \
+    && pecl install imagick-3.7.0 \
     && docker-php-ext-enable \
         redis \
         igbinary \
