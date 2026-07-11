@@ -102,7 +102,7 @@ sequenceDiagram
     SPA->>SPA: Saves token in localStorage
     SPA-->>User: Redirects to /app/dashboard
 
-    Note over SPA,API: All subsequent requests send<br/>Authorization: Bearer &lt;token&gt;
+    Note over SPA,API: All subsequent requests include JWT in Authorization header
 
     SPA->>API: Any protected route
     API->>API: Validates JWT (auth:api)
