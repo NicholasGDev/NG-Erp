@@ -18,7 +18,29 @@
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-    --color-brand:       #00C86A;
-    --color-brand-dark:  #00A357;
-    --color-brand-light: #e6fff3;
+    /* Caronte red — matches the logo */
+    --color-brand:       #C0211E;
+    --color-brand-dark:  #9B1A18;
+    --color-brand-light: #FECACA;
+}
+
+/* DaisyUI v5 — força borda arredondada e cor cinza claro em todos os campos */
+@layer base {
+    :root {
+        --radius-field: 0.75rem;
+    }
+
+    .input,
+    .select,
+    .textarea {
+        border-radius: 0.75rem !important;
+        border-color: #d1d5db !important;
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+        border-color: #C0211E !important;
+        outline: none !important;
+    }
 }

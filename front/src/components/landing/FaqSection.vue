@@ -1,13 +1,13 @@
 <template>
   <section class="py-20 bg-gray-50" id="faq">
     <div class="max-w-3xl mx-auto px-6" data-fade>
-      <h2 class="text-3xl md:text-4xl font-black text-gray-900 text-center mb-10">Perguntas frequentes</h2>
+      <h2 class="text-3xl md:text-4xl font-black text-base-content text-center mb-10">Perguntas frequentes</h2>
 
       <div class="space-y-3">
         <details
           v-for="item in faqs"
           :key="item.q"
-          class="faq-item bg-white border border-gray-100 rounded-xl px-6 py-4 cursor-pointer group"
+          class="faq-item bg-base-100 border border-base-200 rounded-xl px-6 py-4 cursor-pointer group"
         >
           <summary class="flex items-center justify-between font-semibold text-gray-800">
             {{ item.q }}

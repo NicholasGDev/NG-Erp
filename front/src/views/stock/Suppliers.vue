@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-black text-gray-900">Fornecedores</h2>
+      <h2 class="text-xl font-black text-base-content">Fornecedores</h2>
       <button class="btn btn-brand btn-sm rounded-full" @click="openDrawer()">+ Novo Fornecedor</button>
     </div>
 
-    <div class="card bg-white shadow-sm border border-gray-100 overflow-x-auto">
+    <div class="card bg-base-100 shadow-sm border border-base-200 overflow-x-auto">
       <table class="table erp-table w-full">
         <thead>
           <tr><th>CNPJ</th><th>Razão Social</th><th>E-mail</th><th>Telefone</th><th>Prazo (dias)</th><th>Status</th><th></th></tr>
@@ -15,7 +15,7 @@
           <tr v-else-if="!items.length"><td colspan="7" class="text-center py-8 text-gray-400">Nenhum fornecedor.</td></tr>
           <tr v-for="item in items" :key="item.id">
             <td class="font-mono text-xs">{{ item.tax_id }}</td>
-            <td class="font-semibold text-gray-900">{{ item.legal_name }}</td>
+            <td class="font-semibold text-base-content">{{ item.legal_name }}</td>
             <td class="text-sm text-gray-500">{{ item.contact_email ?? '—' }}</td>
             <td class="text-sm text-gray-500">{{ item.phone ?? '—' }}</td>
             <td class="text-sm text-center">{{ item.delivery_lead_time_days }}</td>
@@ -33,27 +33,27 @@
       <div class="grid grid-cols-2 gap-4">
         <fieldset class="fieldset col-span-2">
           <legend class="fieldset-legend">CNPJ</legend>
-          <input v-model="form.tax_id" type="text" placeholder="XX.XXX.XXX/XXXX-XX" class="input input-bordered w-full" />
+          <input v-model="form.tax_id" type="text" placeholder="XX.XXX.XXX/XXXX-XX" class="input border border-base-300 w-full" />
         </fieldset>
         <fieldset class="fieldset col-span-2">
           <legend class="fieldset-legend">Razão Social</legend>
-          <input v-model="form.legal_name" type="text" class="input input-bordered w-full" />
+          <input v-model="form.legal_name" type="text" class="input border border-base-300 w-full" />
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">E-mail</legend>
-          <input v-model="form.contact_email" type="email" class="input input-bordered w-full" placeholder="Opcional" />
+          <input v-model="form.contact_email" type="email" class="input border border-base-300 w-full" placeholder="Opcional" />
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Telefone</legend>
-          <input v-model="form.phone" type="text" class="input input-bordered w-full" placeholder="Opcional" />
+          <input v-model="form.phone" type="text" class="input border border-base-300 w-full" placeholder="Opcional" />
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Prazo Entrega (dias)</legend>
-          <input v-model="form.delivery_lead_time_days" type="number" min="1" class="input input-bordered w-full" />
+          <input v-model="form.delivery_lead_time_days" type="number" min="1" class="input border border-base-300 w-full" />
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Cond. Pagamento</legend>
-          <input v-model="form.default_payment_terms" type="text" placeholder="Ex: 30/60/90" class="input input-bordered w-full" />
+          <input v-model="form.default_payment_terms" type="text" placeholder="Ex: 30/60/90" class="input border border-base-300 w-full" />
         </fieldset>
         <label class="col-span-2 flex items-center gap-2 text-sm cursor-pointer">
           <input v-model="form.active" type="checkbox" class="checkbox checkbox-success checkbox-sm" /> Ativo

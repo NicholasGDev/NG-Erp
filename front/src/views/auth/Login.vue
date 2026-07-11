@@ -4,11 +4,11 @@
     <!-- Painel esquerdo — branding -->
     <div class="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-brand relative overflow-hidden">
       <!-- Círculos decorativos -->
-      <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/10 pointer-events-none"></div>
-      <div class="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-white/10 pointer-events-none"></div>
+      <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-base-100/10 pointer-events-none"></div>
+      <div class="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-base-100/10 pointer-events-none"></div>
 
       <RouterLink to="/" class="flex items-center gap-3 z-10">
-        <img src="@/assets/logo.png" alt="Caronte ERP" class="h-10 w-10" />
+        <img src="@/assets/logo.png" alt="Caronte ERP" class="h-30 w-30" />
         <span class="text-white text-2xl font-black tracking-tight">Caronte ERP</span>
       </RouterLink>
 
@@ -22,7 +22,7 @@
 
         <div class="space-y-3">
           <div v-for="item in features" :key="item" class="flex items-center gap-3">
-            <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+            <span class="w-5 h-5 rounded-full bg-base-100/20 flex items-center justify-center flex-shrink-0">
               <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
               </svg>
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Painel direito — formulário -->
-    <div class="flex-1 flex items-center justify-center p-6 bg-white">
+    <div class="flex-1 flex items-center justify-center p-6 bg-base-100">
       <div class="w-full max-w-md">
 
         <!-- Logo mobile -->
@@ -46,7 +46,7 @@
         </RouterLink>
 
         <div class="mb-8">
-          <h1 class="text-2xl font-black text-gray-900 mb-1">Bem-vindo de volta</h1>
+          <h1 class="text-2xl font-black text-base-content mb-1">Bem-vindo de volta</h1>
           <p class="text-gray-500 text-sm">Acesse sua conta para continuar</p>
         </div>
 
@@ -68,7 +68,7 @@
               v-model="form.email"
               type="email"
               placeholder="seu@email.com"
-              class="input input-bordered w-full focus:border-brand focus:outline-none"
+              class="input border border-base-300 w-full"
               required
               autocomplete="email"
             />
@@ -87,7 +87,7 @@
                 v-model="form.password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="••••••••"
-                class="input input-bordered w-full pr-12 focus:border-brand focus:outline-none"
+                class="input border border-base-300 w-full pr-12"
                 required
                 autocomplete="current-password"
               />

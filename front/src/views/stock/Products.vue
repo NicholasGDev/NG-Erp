@@ -1,15 +1,15 @@
 <template>
   <div>
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-black text-gray-900">Produtos</h2>
+      <h2 class="text-xl font-black text-base-content">Produtos</h2>
       <button class="btn btn-brand btn-sm rounded-full" @click="openDrawer()">+ Novo Produto</button>
     </div>
 
     <div class="mb-4">
-      <input v-model="search" type="text" placeholder="Buscar por SKU ou nome..." class="input input-bordered w-full max-w-sm" @input="debouncedLoad" />
+      <input v-model="search" type="text" placeholder="Buscar por SKU ou nome..." class="input border border-base-300 w-full max-w-sm" @input="debouncedLoad" />
     </div>
 
-    <div class="card bg-white shadow-sm border border-gray-100 overflow-x-auto">
+    <div class="card bg-base-100 shadow-sm border border-base-200 overflow-x-auto">
       <table class="table erp-table w-full">
         <thead>
           <tr><th>SKU</th><th>Nome</th><th>Un.</th><th>Custo Médio</th><th>Est. Mín.</th><th>Lote</th><th>Status</th><th></th></tr>
@@ -19,7 +19,7 @@
           <tr v-else-if="!items.length"><td colspan="8" class="text-center py-8 text-gray-400">Nenhum produto.</td></tr>
           <tr v-for="item in items" :key="item.id">
             <td class="font-mono text-xs text-gray-500">{{ item.sku }}</td>
-            <td class="font-semibold text-gray-900">{{ item.name }}</td>
+            <td class="font-semibold text-base-content">{{ item.name }}</td>
             <td><span class="badge badge-outline badge-sm">{{ item.unit_of_measure }}</span></td>
             <td class="text-sm">R$ {{ Number(item.current_average_cost).toFixed(4) }}</td>
             <td class="text-sm">{{ item.minimum_stock }}</td>
@@ -38,32 +38,32 @@
       <div class="grid grid-cols-2 gap-4">
         <fieldset class="fieldset col-span-2">
           <legend class="fieldset-legend">SKU</legend>
-          <input v-model="form.sku" type="text" placeholder="Ex: PROD-001" class="input input-bordered w-full" />
+          <input v-model="form.sku" type="text" placeholder="Ex: PROD-001" class="input border border-base-300 w-full" />
         </fieldset>
         <fieldset class="fieldset col-span-2">
           <legend class="fieldset-legend">Nome</legend>
-          <input v-model="form.name" type="text" class="input input-bordered w-full" />
+          <input v-model="form.name" type="text" class="input border border-base-300 w-full" />
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Unidade</legend>
-          <select v-model="form.unit_of_measure" class="select select-bordered w-full">
+          <select v-model="form.unit_of_measure" class="select border border-base-300 w-full">
             <option>UN</option><option>KG</option><option>CX</option><option>LT</option><option>MT</option>
           </select>
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Método Custo</legend>
-          <select v-model="form.costing_method" class="select select-bordered w-full">
+          <select v-model="form.costing_method" class="select border border-base-300 w-full">
             <option value="AVERAGE_COST">Custo Médio</option>
             <option value="FIFO">PEPS</option>
           </select>
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Estoque Mínimo</legend>
-          <input v-model="form.minimum_stock" type="number" step="0.001" class="input input-bordered w-full" />
+          <input v-model="form.minimum_stock" type="number" step="0.001" class="input border border-base-300 w-full" />
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Estoque Máximo</legend>
-          <input v-model="form.maximum_stock" type="number" step="0.001" class="input input-bordered w-full" placeholder="Opcional" />
+          <input v-model="form.maximum_stock" type="number" step="0.001" class="input border border-base-300 w-full" placeholder="Opcional" />
         </fieldset>
         <div class="col-span-2 flex gap-4 pt-1">
           <label class="flex items-center gap-2 text-sm cursor-pointer">

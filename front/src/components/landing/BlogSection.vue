@@ -1,18 +1,18 @@
 <template>
   <section class="py-20 bg-gray-50" id="blog">
     <div class="max-w-7xl mx-auto px-6" data-fade>
-      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-2">
+      <h2 class="text-3xl md:text-4xl font-black text-base-content mb-2">
         Tudo que você precisa saber sobre<br class="hidden md:block"/>
         <span class="text-brand">gestão de estoque e compras</span>
       </h2>
       <p class="text-gray-500 mb-10">Conteúdo gratuito criado por nossos especialistas.</p>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <article v-for="post in posts" :key="post.title" class="card bg-white shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+        <article v-for="post in posts" :key="post.title" class="card bg-base-100 shadow-sm border border-base-200 overflow-hidden hover:shadow-md transition-shadow">
           <div class="bg-gray-200 h-44 flex items-center justify-center text-gray-400 text-sm">{{ post.img }}</div>
           <div class="card-body p-5">
             <span class="text-xs font-bold uppercase text-brand">{{ post.category }}</span>
-            <h3 class="font-bold text-gray-900 mt-1 mb-2 leading-tight">{{ post.title }}</h3>
+            <h3 class="font-bold text-base-content mt-1 mb-2 leading-tight">{{ post.title }}</h3>
             <p class="text-sm text-gray-500 mb-4">{{ post.excerpt }}</p>
             <a href="#" class="text-sm font-semibold hover:underline flex items-center gap-1 text-brand">
               Leia mais

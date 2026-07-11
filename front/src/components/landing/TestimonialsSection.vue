@@ -1,8 +1,8 @@
 <template>
-  <section class="py-20 bg-white" id="depoimentos">
+  <section class="py-20 bg-base-100" id="depoimentos">
     <div class="max-w-7xl mx-auto px-6" data-fade>
       <div class="flex items-center justify-between mb-10">
-        <h2 class="text-3xl md:text-4xl font-black text-gray-900">O que nossos clientes falam</h2>
+        <h2 class="text-3xl md:text-4xl font-black text-base-content">O que nossos clientes falam</h2>
         <div class="hidden md:flex items-center gap-2 text-sm text-gray-500">
           <span class="font-bold text-gray-700">4.7</span>
           <div class="flex text-yellow-400">★★★★★</div>
@@ -11,13 +11,13 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div v-for="t in testimonials" :key="t.name" class="card bg-gray-50 border border-gray-100 p-6">
+        <div v-for="t in testimonials" :key="t.name" class="card bg-gray-50 border border-base-200 p-6">
           <div class="flex items-center gap-3 mb-4">
             <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 font-bold text-lg">
               {{ t.name[0] }}
             </div>
             <div>
-              <p class="font-bold text-gray-900 text-sm">{{ t.name }}</p>
+              <p class="font-bold text-base-content text-sm">{{ t.name }}</p>
               <p class="text-xs text-gray-500">{{ t.role }}</p>
             </div>
           </div>

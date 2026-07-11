@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-gray-50 border-y border-gray-100 py-5">
+  <section class="bg-gray-50 border-y border-base-200 py-5">
     <div class="max-w-7xl mx-auto px-6 flex flex-wrap items-center justify-center gap-8" data-fade>
 
       <div class="flex items-center gap-2 text-sm font-medium text-gray-600">
