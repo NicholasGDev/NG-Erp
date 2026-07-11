@@ -4,77 +4,43 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\UserResource;
+use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
-    /* ── Helpers ─────────────────────────────────────────────────── */
-
-    private function tokenResponse(string $token, ?User $user = null): JsonResponse
-    {
-        $user ??= auth('api')->user();
-
-        return response()->json([
-            'token'      => $token,
-            'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60,
-            'user'       => $user,
-        ]);
-    }
+    public function __construct(protected AuthService $service) {}
 
     /* ── POST /api/auth/register ─────────────────────────────────── */
 
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'company'  => ['nullable', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'confirmed', Password::min(8)],
-        ]);
+        $payload = $this->service->register($request->validated());
 
-        $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-
-        $token = JWTAuth::fromUser($user);
-
-        return $this->tokenResponse($token, $user)->setStatusCode(201);
+        return response()->json($this->withUserResource($payload), 201);
     }
 
     /* ── POST /api/auth/login ────────────────────────────────────── */
 
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email'    => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+        $payload = $this->service->login($request->validated());
 
-        if (! $token = auth('api')->attempt($credentials)) {
+        if ($payload === null) {
             return response()->json(['message' => 'E-mail ou senha incorretos.'], 401);
         }
 
-        return $this->tokenResponse($token);
+        return response()->json($this->withUserResource($payload));
     }
 
     /* ── POST /api/auth/logout ───────────────────────────────────── */
 
     public function logout(): JsonResponse
     {
-        try {
-            auth('api')->logout();
-        } catch (JWTException) {
-            // token já inválido, ignora
-        }
+        $this->service->logout();
 
         return response()->json(['message' => 'Logout realizado.']);
     }
@@ -83,19 +49,30 @@ class AuthController extends Controller
 
     public function refresh(): JsonResponse
     {
-        try {
-            $token = auth('api')->refresh();
-        } catch (JWTException) {
+        $payload = $this->service->refresh();
+
+        if ($payload === null) {
             return response()->json(['message' => 'Token inválido.'], 401);
         }
 
-        return $this->tokenResponse($token);
+        return response()->json($this->withUserResource($payload));
     }
 
     /* ── GET /api/auth/me ────────────────────────────────────────── */
 
     public function me(): JsonResponse
     {
-        return response()->json(auth('api')->user());
+        return response()->json(new UserResource($this->service->me()));
+    }
+
+    /**
+     * @param array{token: string, token_type: string, expires_in: int, user: \App\Models\User} $payload
+     * @return array{token: string, token_type: string, expires_in: int, user: UserResource}
+     */
+    private function withUserResource(array $payload): array
+    {
+        $payload['user'] = new UserResource($payload['user']);
+
+        return $payload;
     }
 }

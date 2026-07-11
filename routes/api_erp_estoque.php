@@ -3,37 +3,37 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Estoque\ArmazemController;
-use App\Http\Controllers\Estoque\FornecedorController;
-use App\Http\Controllers\Estoque\ProdutoController;
-use App\Http\Controllers\Estoque\PedidoCompraController;
-use App\Http\Controllers\Estoque\MovimentacaoEstoqueController;
-use App\Http\Controllers\Estoque\InventarioController;
+use App\Http\Controllers\Stock\WarehouseController;
+use App\Http\Controllers\Stock\SupplierController;
+use App\Http\Controllers\Stock\ProductController;
+use App\Http\Controllers\Stock\PurchaseOrderController;
+use App\Http\Controllers\Stock\StockMovementController;
+use App\Http\Controllers\Stock\PhysicalInventoryController;
 use Illuminate\Support\Facades\Route;
 
-/* ── Auth — rotas públicas ────────────────────────────────────────── */
+/* ── Auth — public routes ─────────────────────────────────────────── */
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login',    [AuthController::class, 'login']);
 });
 
-/* ── Auth — rotas protegidas ──────────────────────────────────────── */
+/* ── Auth — protected routes ──────────────────────────────────────── */
 Route::prefix('auth')->middleware('auth:api')->group(function () {
     Route::post('logout',  [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get ('me',      [AuthController::class, 'me']);
 });
 
-/* ── ERP — rotas protegidas por JWT ───────────────────────────────── */
+/* ── ERP — JWT-protected routes ───────────────────────────────────── */
 Route::middleware('auth:api')->prefix('estoque')->group(function () {
-    Route::apiResource('armazens',              ArmazemController::class);
-    Route::apiResource('fornecedores',          FornecedorController::class);
-    Route::apiResource('produtos',              ProdutoController::class);
-    Route::apiResource('pedidos-compra',        PedidoCompraController::class);
-    Route::apiResource('inventarios',           InventarioController::class);
+    Route::apiResource('warehouses',        WarehouseController::class);
+    Route::apiResource('suppliers',         SupplierController::class);
+    Route::apiResource('products',          ProductController::class);
+    Route::apiResource('purchase-orders',   PurchaseOrderController::class);
+    Route::apiResource('inventories',       PhysicalInventoryController::class);
 
-    // Kardex — sem PUT/DELETE
-    Route::get ('movimentacoes',      [MovimentacaoEstoqueController::class, 'index']);
-    Route::post('movimentacoes',      [MovimentacaoEstoqueController::class, 'store']);
-    Route::get ('movimentacoes/{id}', [MovimentacaoEstoqueController::class, 'show']);
+    // Kardex — no PUT/DELETE
+    Route::get ('stock-movements',       [StockMovementController::class, 'index']);
+    Route::post('stock-movements',       [StockMovementController::class, 'store']);
+    Route::get ('stock-movements/{id}',  [StockMovementController::class, 'show']);
 });

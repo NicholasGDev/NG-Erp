@@ -19,12 +19,12 @@
           <tr v-else-if="!items.length"><td colspan="8" class="text-center py-8 text-gray-400">Nenhum produto.</td></tr>
           <tr v-for="item in items" :key="item.id">
             <td class="font-mono text-xs text-gray-500">{{ item.sku }}</td>
-            <td class="font-semibold text-gray-900">{{ item.nome }}</td>
-            <td><span class="badge badge-outline badge-sm">{{ item.unidade_medida }}</span></td>
-            <td class="text-sm">R$ {{ Number(item.custo_medio_atual).toFixed(4) }}</td>
-            <td class="text-sm">{{ item.estoque_minimo }}</td>
-            <td><span class="badge badge-sm" :class="item.controla_lote ? 'badge-warning' : 'badge-ghost'">{{ item.controla_lote ? 'Sim' : 'Não' }}</span></td>
-            <td><span class="status-badge" :class="item.ativo ? 'status-ativo' : 'status-inativo'">{{ item.ativo ? 'Ativo' : 'Inativo' }}</span></td>
+            <td class="font-semibold text-gray-900">{{ item.name }}</td>
+            <td><span class="badge badge-outline badge-sm">{{ item.unit_of_measure }}</span></td>
+            <td class="text-sm">R$ {{ Number(item.current_average_cost).toFixed(4) }}</td>
+            <td class="text-sm">{{ item.minimum_stock }}</td>
+            <td><span class="badge badge-sm" :class="item.tracks_batch ? 'badge-warning' : 'badge-ghost'">{{ item.tracks_batch ? 'Sim' : 'Não' }}</span></td>
+            <td><span class="status-badge" :class="item.active ? 'status-ativo' : 'status-inativo'">{{ item.active ? 'Ativo' : 'Inativo' }}</span></td>
             <td class="flex gap-2">
               <button class="btn btn-ghost btn-xs" @click="openDrawer(item)">Editar</button>
               <button class="btn btn-ghost btn-xs text-error" @click="remove(item.id)">Excluir</button>
@@ -42,35 +42,35 @@
         </fieldset>
         <fieldset class="fieldset col-span-2">
           <legend class="fieldset-legend">Nome</legend>
-          <input v-model="form.nome" type="text" class="input input-bordered w-full" />
+          <input v-model="form.name" type="text" class="input input-bordered w-full" />
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Unidade</legend>
-          <select v-model="form.unidade_medida" class="select select-bordered w-full">
+          <select v-model="form.unit_of_measure" class="select select-bordered w-full">
             <option>UN</option><option>KG</option><option>CX</option><option>LT</option><option>MT</option>
           </select>
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Método Custo</legend>
-          <select v-model="form.metodo_custo" class="select select-bordered w-full">
-            <option value="CUSTO_MEDIO">Custo Médio</option>
-            <option value="PEPS">PEPS</option>
+          <select v-model="form.costing_method" class="select select-bordered w-full">
+            <option value="AVERAGE_COST">Custo Médio</option>
+            <option value="FIFO">PEPS</option>
           </select>
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Estoque Mínimo</legend>
-          <input v-model="form.estoque_minimo" type="number" step="0.001" class="input input-bordered w-full" />
+          <input v-model="form.minimum_stock" type="number" step="0.001" class="input input-bordered w-full" />
         </fieldset>
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Estoque Máximo</legend>
-          <input v-model="form.estoque_maximo" type="number" step="0.001" class="input input-bordered w-full" placeholder="Opcional" />
+          <input v-model="form.maximum_stock" type="number" step="0.001" class="input input-bordered w-full" placeholder="Opcional" />
         </fieldset>
         <div class="col-span-2 flex gap-4 pt-1">
           <label class="flex items-center gap-2 text-sm cursor-pointer">
-            <input v-model="form.controla_lote" type="checkbox" class="checkbox checkbox-warning checkbox-sm" /> Controla Lote
+            <input v-model="form.tracks_batch" type="checkbox" class="checkbox checkbox-warning checkbox-sm" /> Controla Lote
           </label>
           <label class="flex items-center gap-2 text-sm cursor-pointer">
-            <input v-model="form.ativo" type="checkbox" class="checkbox checkbox-success checkbox-sm" /> Ativo
+            <input v-model="form.active" type="checkbox" class="checkbox checkbox-success checkbox-sm" /> Ativo
           </label>
         </div>
       </div>
@@ -84,12 +84,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { produtos as api } from '@/api/estoque.js';
+import { products as api } from '@/api/estoque.js';
 import DrawerPanel from '@/components/DrawerPanel.vue';
 
 const items = ref([]); const loading = ref(false); const saving = ref(false);
 const search = ref(''); const drawerOpen = ref(false);
-const emptyForm = { id: null, sku: '', nome: '', unidade_medida: 'UN', metodo_custo: 'CUSTO_MEDIO', estoque_minimo: 0, estoque_maximo: null, controla_lote: false, ativo: true };
+const emptyForm = { id: null, sku: '', name: '', unit_of_measure: 'UN', costing_method: 'AVERAGE_COST', minimum_stock: 0, maximum_stock: null, tracks_batch: false, active: true };
 const form = ref({ ...emptyForm });
 
 let debounceTimer;

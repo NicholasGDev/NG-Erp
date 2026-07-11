@@ -1,59 +1,59 @@
 /**
- * estoque.js — Todos os endpoints da API de estoque
- * Mapeados a partir de routes/api_erp_estoque.php
+ * estoque.js — All stock API endpoints
+ * Mapped from routes/api_erp_estoque.php
  */
 import http from './http.js';
 
 const BASE = '/estoque';
 
-/* ── Armazéns ────────────────────────────────────────────────────────── */
-export const armazens = {
-    index:   (params) => http.get(`${BASE}/armazens`, { params }),
-    show:    (id)     => http.get(`${BASE}/armazens/${id}`),
-    store:   (data)   => http.post(`${BASE}/armazens`, data),
-    update:  (id, data) => http.put(`${BASE}/armazens/${id}`, data),
-    destroy: (id)     => http.delete(`${BASE}/armazens/${id}`),
+/* ── Warehouses ─────────────────────────────────────────────────────── */
+export const warehouses = {
+    index:   (params) => http.get(`${BASE}/warehouses`, { params }),
+    show:    (id)     => http.get(`${BASE}/warehouses/${id}`),
+    store:   (data)   => http.post(`${BASE}/warehouses`, data),
+    update:  (id, data) => http.put(`${BASE}/warehouses/${id}`, data),
+    destroy: (id)     => http.delete(`${BASE}/warehouses/${id}`),
 };
 
-/* ── Fornecedores ────────────────────────────────────────────────────── */
-export const fornecedores = {
-    index:   (params) => http.get(`${BASE}/fornecedores`, { params }),
-    show:    (id)     => http.get(`${BASE}/fornecedores/${id}`),
-    store:   (data)   => http.post(`${BASE}/fornecedores`, data),
-    update:  (id, data) => http.put(`${BASE}/fornecedores/${id}`, data),
-    destroy: (id)     => http.delete(`${BASE}/fornecedores/${id}`),
+/* ── Suppliers ───────────────────────────────────────────────────────── */
+export const suppliers = {
+    index:   (params) => http.get(`${BASE}/suppliers`, { params }),
+    show:    (id)     => http.get(`${BASE}/suppliers/${id}`),
+    store:   (data)   => http.post(`${BASE}/suppliers`, data),
+    update:  (id, data) => http.put(`${BASE}/suppliers/${id}`, data),
+    destroy: (id)     => http.delete(`${BASE}/suppliers/${id}`),
 };
 
-/* ── Produtos ────────────────────────────────────────────────────────── */
-export const produtos = {
-    index:   (params) => http.get(`${BASE}/produtos`, { params }),
-    show:    (id)     => http.get(`${BASE}/produtos/${id}`),
-    store:   (data)   => http.post(`${BASE}/produtos`, data),
-    update:  (id, data) => http.put(`${BASE}/produtos/${id}`, data),
-    destroy: (id)     => http.delete(`${BASE}/produtos/${id}`),
+/* ── Products ────────────────────────────────────────────────────────── */
+export const products = {
+    index:   (params) => http.get(`${BASE}/products`, { params }),
+    show:    (id)     => http.get(`${BASE}/products/${id}`),
+    store:   (data)   => http.post(`${BASE}/products`, data),
+    update:  (id, data) => http.put(`${BASE}/products/${id}`, data),
+    destroy: (id)     => http.delete(`${BASE}/products/${id}`),
 };
 
-/* ── Pedidos de Compra ───────────────────────────────────────────────── */
-export const pedidosCompra = {
-    index:   (params) => http.get(`${BASE}/pedidos-compra`, { params }),
-    show:    (id)     => http.get(`${BASE}/pedidos-compra/${id}`),
-    store:   (data)   => http.post(`${BASE}/pedidos-compra`, data),
-    update:  (id, data) => http.put(`${BASE}/pedidos-compra/${id}`, data),
-    destroy: (id)     => http.delete(`${BASE}/pedidos-compra/${id}`),
+/* ── Purchase Orders ─────────────────────────────────────────────────── */
+export const purchaseOrders = {
+    index:   (params) => http.get(`${BASE}/purchase-orders`, { params }),
+    show:    (id)     => http.get(`${BASE}/purchase-orders/${id}`),
+    store:   (data)   => http.post(`${BASE}/purchase-orders`, data),
+    update:  (id, data) => http.put(`${BASE}/purchase-orders/${id}`, data),
+    destroy: (id)     => http.delete(`${BASE}/purchase-orders/${id}`),
 };
 
-/* ── Movimentações de Estoque (Kardex) ───────────────────────────────── */
-export const movimentacoes = {
-    index:   (params) => http.get(`${BASE}/movimentacoes`, { params }),
-    show:    (id)     => http.get(`${BASE}/movimentacoes/${id}`),
-    store:   (data)   => http.post(`${BASE}/movimentacoes`, data),
+/* ── Stock Movements (Kardex) ────────────────────────────────────────── */
+export const stockMovements = {
+    index:   (params) => http.get(`${BASE}/stock-movements`, { params }),
+    show:    (id)     => http.get(`${BASE}/stock-movements/${id}`),
+    store:   (data)   => http.post(`${BASE}/stock-movements`, data),
 };
 
-/* ── Inventários ─────────────────────────────────────────────────────── */
-export const inventarios = {
-    index:   (params) => http.get(`${BASE}/inventarios`, { params }),
-    show:    (id)     => http.get(`${BASE}/inventarios/${id}`),
-    store:   (data)   => http.post(`${BASE}/inventarios`, data),
-    update:  (id, data) => http.put(`${BASE}/inventarios/${id}`, data),
-    destroy: (id)     => http.delete(`${BASE}/inventarios/${id}`),
+/* ── Physical Inventories ────────────────────────────────────────────── */
+export const physicalInventories = {
+    index:   (params) => http.get(`${BASE}/inventories`, { params }),
+    show:    (id)     => http.get(`${BASE}/inventories/${id}`),
+    store:   (data)   => http.post(`${BASE}/inventories`, data),
+    update:  (id, data) => http.put(`${BASE}/inventories/${id}`, data),
+    destroy: (id)     => http.delete(`${BASE}/inventories/${id}`),
 };
