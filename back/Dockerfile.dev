@@ -123,6 +123,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY docker/php/php-dev.ini      $PHP_INI_DIR/conf.d/99-app-dev.ini
 COPY docker/php/xdebug.ini       $PHP_INI_DIR/conf.d/99-xdebug.ini
 COPY docker/php/www.conf         /usr/local/etc/php-fpm.d/www.conf
+COPY docker/php/entrypoint.dev.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # ── Usuário não-root ──────────────────────────────────────────────────────────
 RUN groupmod -o -g "${GROUP_ID}" www-data \
@@ -134,4 +136,4 @@ WORKDIR /var/www/html
 USER www-data
 
 EXPOSE 9000
-CMD ["php-fpm"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
