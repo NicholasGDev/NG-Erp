@@ -1,15 +1,13 @@
 /**
  * useTheme.js — Controla o tema light/dark do Caronte ERP.
  *
- * Persiste a preferência em localStorage.
- * Aplica data-theme="light|dark" no <html> para o DaisyUI e ativa
- * o variant dark: do Tailwind v4 (configurado via @custom-variant).
+ * Singleton: o efeito é criado apenas uma vez. Qualquer componente pode
+ * chamar useTheme() e obterá a mesma instância reativa.
  */
-import { ref, watchEffect } from 'vue';
+import { ref, watch } from 'vue';
 
 const STORAGE_KEY = 'caronte_theme';
 
-// Detecta preferência inicial: localStorage → prefers-color-scheme → light
 function getInitial() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === 'light' || stored === 'dark') return stored;
@@ -18,11 +16,17 @@ function getInitial() {
 
 const theme = ref(getInitial());
 
-// Aplica no <html> e persiste sempre que o tema mudar
-watchEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme.value);
-    localStorage.setItem(STORAGE_KEY, theme.value);
-});
+// Aplica imediatamente no <html>
+function applyTheme(value) {
+    document.documentElement.setAttribute('data-theme', value);
+    localStorage.setItem(STORAGE_KEY, value);
+}
+
+// Aplica o tema inicial assim que o módulo é carregado
+applyTheme(theme.value);
+
+// Reage a mudanças (ex: clique no toggle)
+watch(theme, applyTheme);
 
 export function useTheme() {
     const isDark = () => theme.value === 'dark';

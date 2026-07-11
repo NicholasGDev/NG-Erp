@@ -3,11 +3,11 @@
 
     <!-- Painel esquerdo — branding -->
     <div class="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-brand relative overflow-hidden">
-      <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/10 pointer-events-none"></div>
-      <div class="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-white/10 pointer-events-none"></div>
+      <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-base-100/10 pointer-events-none"></div>
+      <div class="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-base-100/10 pointer-events-none"></div>
 
       <RouterLink to="/" class="flex items-center gap-3 z-10">
-        <img src="@/assets/logo.png" alt="Caronte ERP" class="h-10 w-10" />
+        <img src="@/assets/logo.png" alt="Caronte ERP" class="h-30 w-30" />
         <span class="text-white text-2xl font-black tracking-tight">Caronte ERP</span>
       </RouterLink>
 
@@ -20,7 +20,7 @@
         </p>
 
         <div class="grid grid-cols-2 gap-4">
-          <div v-for="stat in stats" :key="stat.label" class="bg-white/10 rounded-2xl p-4">
+          <div v-for="stat in stats" :key="stat.label" class="bg-base-100/10 rounded-2xl p-4">
             <p class="text-white text-2xl font-black">{{ stat.value }}</p>
             <p class="text-green-100 text-xs mt-1">{{ stat.label }}</p>
           </div>
@@ -31,7 +31,7 @@
     </div>
 
     <!-- Painel direito — formulário -->
-    <div class="flex-1 flex items-center justify-center p-6 bg-white overflow-y-auto">
+    <div class="flex-1 flex items-center justify-center p-6 bg-base-100 overflow-y-auto">
       <div class="w-full max-w-md py-8">
 
         <!-- Logo mobile -->
@@ -41,7 +41,7 @@
         </RouterLink>
 
         <div class="mb-8">
-          <h1 class="text-2xl font-black text-gray-900 mb-1">Criar sua conta</h1>
+          <h1 class="text-2xl font-black text-base-content mb-1">Criar sua conta</h1>
           <p class="text-gray-500 text-sm">Preencha os dados abaixo para começar</p>
         </div>
 
@@ -71,7 +71,7 @@
               v-model="form.name"
               type="text"
               placeholder="João da Silva"
-              class="input input-bordered w-full focus:border-brand focus:outline-none"
+              class="input border border-base-300 w-full"
               required
               autocomplete="name"
             />
@@ -87,7 +87,7 @@
               v-model="form.company"
               type="text"
               placeholder="Minha Empresa Ltda"
-              class="input input-bordered w-full focus:border-brand focus:outline-none"
+              class="input border border-base-300 w-full"
               autocomplete="organization"
             />
           </div>
@@ -101,7 +101,7 @@
               v-model="form.email"
               type="email"
               placeholder="seu@email.com"
-              class="input input-bordered w-full focus:border-brand focus:outline-none"
+              class="input border border-base-300 w-full"
               required
               autocomplete="email"
             />
@@ -120,7 +120,7 @@
                 v-model="form.password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="Mínimo 8 caracteres"
-                class="input input-bordered w-full pr-12 focus:border-brand focus:outline-none"
+                class="input border border-base-300 w-full pr-12"
                 required
                 minlength="8"
                 autocomplete="new-password"
@@ -160,7 +160,7 @@
               v-model="form.passwordConfirmation"
               :type="showPassword ? 'text' : 'password'"
               placeholder="Repita a senha"
-              class="input input-bordered w-full focus:border-brand focus:outline-none"
+              class="input border border-base-300 w-full"
               :class="{ 'input-error': form.passwordConfirmation && form.password !== form.passwordConfirmation }"
               required
               autocomplete="new-password"

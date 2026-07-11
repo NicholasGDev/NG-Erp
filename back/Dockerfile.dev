@@ -60,13 +60,18 @@ RUN docker-php-ext-configure gd \
         --with-freetype \
         --with-jpeg \
         --with-webp \
+    && mkdir -p /tmp/dom-headers \
+    && cp /usr/src/php/ext/dom/*.h /tmp/dom-headers/ \
+    && docker-php-ext-install dom xml simplexml xmlwriter xsl \
+    && mkdir -p /usr/local/include/php/ext/dom \
+    && cp /tmp/dom-headers/*.h /usr/local/include/php/ext/dom/ \
+    && docker-php-ext-install xmlreader \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         bz2 \
         calendar \
         ctype \
         dba \
-        dom \
         exif \
         fileinfo \
         ftp \
@@ -81,16 +86,11 @@ RUN docker-php-ext-configure gd \
         pdo \
         pdo_sqlite \
         posix \
-        simplexml \
         sockets \
         sysvmsg \
         sysvsem \
         sysvshm \
         tidy \
-        xml \
-        xmlreader \
-        xmlwriter \
-        xsl \
         zip
 
 # ── Extensoes de banco de dados ───────────────────────────────────────────────
@@ -102,10 +102,10 @@ RUN pecl channel-update pecl.php.net \
     && pecl install \
         redis \
         igbinary \
-        imagick \
         memcached \
         uuid \
         xdebug \
+    && pecl install imagick-3.7.0 \
     && docker-php-ext-enable \
         redis \
         igbinary \
@@ -123,6 +123,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY docker/php/php-dev.ini      $PHP_INI_DIR/conf.d/99-app-dev.ini
 COPY docker/php/xdebug.ini       $PHP_INI_DIR/conf.d/99-xdebug.ini
 COPY docker/php/www.conf         /usr/local/etc/php-fpm.d/www.conf
+COPY docker/php/entrypoint.dev.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # ── Usuário não-root ──────────────────────────────────────────────────────────
 RUN groupmod -o -g "${GROUP_ID}" www-data \
@@ -134,4 +136,4 @@ WORKDIR /var/www/html
 USER www-data
 
 EXPOSE 9000
-CMD ["php-fpm"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

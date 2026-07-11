@@ -1,15 +1,15 @@
 <template>
-  <section class="py-20 bg-white" id="comparativo">
+  <section class="py-20 bg-base-100" id="comparativo">
     <div class="max-w-4xl mx-auto px-6" data-fade>
-      <h2 class="text-3xl md:text-4xl font-black text-gray-900 text-center mb-3">
+      <h2 class="text-3xl md:text-4xl font-black text-base-content text-center mb-3">
         Contrate o plano anual e <span class="text-brand">economize até R$ 4 mil</span>
       </h2>
       <p class="text-center text-gray-500 mb-10">Todos os custos de abertura por nossa conta no plano anual.</p>
 
-      <div class="overflow-x-auto rounded-2xl shadow-lg border border-gray-100">
+      <div class="overflow-x-auto rounded-2xl shadow-lg border border-base-200">
         <table class="w-full text-sm">
           <thead>
-            <tr class="bg-gray-50 border-b border-gray-100">
+            <tr class="bg-gray-50 border-b border-base-200">
               <th class="text-left px-6 py-4 font-semibold text-gray-500 w-1/2">Item</th>
               <th class="text-center px-6 py-4 font-semibold text-gray-500">Média do mercado</th>
               <th class="text-center px-6 py-4 font-black text-brand">Caronte ERP</th>
@@ -17,7 +17,7 @@
           </thead>
           <tbody>
             <tr v-for="(row, i) in rows" :key="i" class="border-b border-gray-50" :class="{ 'bg-gray-50/50': i % 2 !== 0 }">
-              <td class="px-6 py-4 text-gray-700" :class="{ 'font-bold text-gray-900': row.highlight }">{{ row.item }}</td>
+              <td class="px-6 py-4 text-gray-700" :class="{ 'font-bold text-base-content': row.highlight }">{{ row.item }}</td>
               <td class="px-6 py-4 text-center text-gray-400 line-through">{{ row.mercado }}</td>
               <td class="px-6 py-4 text-center font-bold text-brand" :class="row.highlight ? 'text-base' : ''">{{ row.caronte }}</td>
             </tr>

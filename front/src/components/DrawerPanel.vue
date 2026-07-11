@@ -13,11 +13,11 @@
     <Transition name="drawer-slide">
       <div
         v-if="modelValue"
-        class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 flex flex-col shadow-2xl"
+        class="fixed top-0 right-0 h-full w-full max-w-md bg-base-100 z-50 flex flex-col shadow-2xl"
       >
         <!-- Header -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
-          <h3 class="font-black text-lg text-gray-900">{{ title }}</h3>
+        <div class="flex items-center justify-between px-6 py-4 border-b border-base-200 flex-shrink-0">
+          <h3 class="font-black text-lg text-base-content">{{ title }}</h3>
           <button
             class="btn btn-ghost btn-sm btn-square text-gray-400 hover:text-gray-700"
             @click="$emit('update:modelValue', false)"
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Footer com ações -->
-        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 flex-shrink-0">
+        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-base-200 bg-gray-50 flex-shrink-0">
           <slot name="footer" />
         </div>
       </div>

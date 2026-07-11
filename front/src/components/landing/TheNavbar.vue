@@ -1,5 +1,12 @@
 <template>
-  <header id="saas-nav" class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 transition-shadow duration-300" :class="{ 'nav-scrolled': scrolled }">
+  <header
+    id="saas-nav"
+    class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900"
+    style="transition: box-shadow 0.3s ease;"
+    :style="scrolled
+      ? { boxShadow: '0 4px 16px 0 rgba(0,0,0,0.10), 0 1px 4px 0 rgba(0,0,0,0.06)' }
+      : { boxShadow: '0 1px 4px 0 rgba(0,0,0,0.07)' }"
+  >
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
       <a href="#" class="flex items-center gap-2">
         <img src="@/assets/logo-rounded.png" alt="Caronte ERP" class="h-8 w-8" />

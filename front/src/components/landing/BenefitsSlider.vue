@@ -1,19 +1,19 @@
 <template>
-  <section class="py-20 bg-white" id="beneficios">
+  <section class="py-20 bg-base-100" id="beneficios">
     <div class="max-w-7xl mx-auto px-6" data-fade>
-      <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-2">
+      <h2 class="text-3xl md:text-4xl font-black text-base-content mb-2">
         Caronte ERP · <span class="text-brand">muito mais que gestão de estoque</span>
       </h2>
       <p class="text-gray-500 mb-8">Tudo que você precisa para controlar seu negócio, numa única plataforma.</p>
 
       <div class="benefit-track">
-        <div v-for="card in cards" :key="card.title" class="benefit-card card bg-base-100 shadow-md border border-gray-100 p-6">
+        <div v-for="card in cards" :key="card.title" class="benefit-card card bg-base-100 shadow-md border border-base-200 p-6">
           <div class="w-10 h-10 bg-green-50 text-brand rounded-xl flex items-center justify-center mb-4">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="card.icon"/>
             </svg>
           </div>
-          <h4 class="font-bold text-gray-900 mb-2">{{ card.title }}</h4>
+          <h4 class="font-bold text-base-content mb-2">{{ card.title }}</h4>
           <p class="text-sm text-gray-500">{{ card.desc }}</p>
         </div>
       </div>

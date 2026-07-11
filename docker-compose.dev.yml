@@ -18,7 +18,7 @@ services:
     volumes:
       - ./back:/var/www/html
       - back_vendor:/var/www/html/vendor
-      - ./.env:/var/www/html/.env:ro
+      - ./.env:/var/www/html/.env
     networks:
       - app-network
     depends_on:

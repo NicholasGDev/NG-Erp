@@ -1,7 +1,7 @@
 <template>
   <section class="py-20 bg-gray-50" id="solucoes">
     <div class="max-w-7xl mx-auto px-6" data-fade>
-      <h2 class="text-3xl md:text-4xl font-black text-gray-900 text-center mb-2">
+      <h2 class="text-3xl md:text-4xl font-black text-base-content text-center mb-2">
         Soluções para cada etapa da sua jornada
       </h2>
       <p class="text-center text-gray-500 mb-10">Comece do zero, migre do MEI ou troque de contador sem complicações.</p>
@@ -25,7 +25,7 @@
           <span class="inline-block bg-green-50 text-brand text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase">
             {{ activePanel.badge }}
           </span>
-          <h3 class="text-2xl font-black text-gray-900 mb-4">{{ activePanel.title }}</h3>
+          <h3 class="text-2xl font-black text-base-content mb-4">{{ activePanel.title }}</h3>
           <ul class="space-y-3 mb-6">
             <li v-for="item in activePanel.items" :key="item" class="flex items-start gap-3 text-sm text-gray-600">
               <span class="w-5 h-5 bg-brand text-white rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">✓</span>
